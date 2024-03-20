@@ -16,7 +16,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '18.14.x'
+          node-version: '14.x'
 
       - name: Install Angular CLI
         run: npm install -g @angular/cli
@@ -33,20 +33,32 @@ jobs:
     needs: build
 
     steps:
-      - name: Deploy to Local Web Server
-        run: |
-          # Start a local web server to host the Angular application
-          # Example: ng serve --port 4200
-          ng serve --port 4200
+      - name: Deploy to Windows Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.WINDOWS_SERVER_IP }}
+          username: ${{ secrets.WINDOWS_SERVER_USERNAME }}
+          password: ${{ secrets.WINDOWS_SERVER_PASSWORD }}
+          script: |
+            # Navigate to the directory where the Angular app is deployed
+            cd C:/path/to/angular/app
 
-          # Download ngrok
-          Invoke-WebRequest -Uri https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-windows-amd64.zip -OutFile ngrok.zip
+            # Copy the built Angular app files to the server
+            # You may need to adjust the source path based on your project structure
+            cp -r /path/to/angular/app/dist/* .
 
-          # Extract ngrok
-          Expand-Archive -Path ngrok.zip -DestinationPath .
+            # Start the Angular app
+            ng serve --host 0.0.0.0 --port 4200 &
 
-          # Expose the local web server to the internet using ngrok
-          .\ngrok http 4200
+            # Download ngrok
+            Invoke-WebRequest -Uri https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-windows-amd64.zip -OutFile ngrok.zip
+            Expand-Archive -Path ngrok.zip -DestinationPath .
+
+            # Expose the local web server to the internet using ngrok
+            .\ngrok http 4200
+
+            # Capture the ngrok URL and use it for further processing or logging
+
 
 
 
