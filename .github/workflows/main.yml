@@ -16,7 +16,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '18.14.x'
+          node-version: '14.x'
 
       - name: Install Angular CLI
         run: npm install -g @angular/cli
@@ -36,11 +36,11 @@ jobs:
       - name: Deploy to Local Web Server
         run: |
           # Navigate to the directory where the Angular app is deployed
-          cd C:/path/to/angular/app
+          cd $GITHUB_WORKSPACE
 
           # Copy the built Angular app files to the server
           # You may need to adjust the source path based on your project structure
-          cp -r /path/to/angular/app/dist/* .
+          cp -r dist/* C:/path/to/your/angular/app
 
           # Start the Angular app
           ng serve --host 0.0.0.0 --port 4200 &
@@ -53,8 +53,3 @@ jobs:
           .\ngrok http 4200
 
           # Capture the ngrok URL and use it for further processing or logging
-
-
-
-
-
