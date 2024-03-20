@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     
     steps:
       - name: Checkout repository
@@ -28,7 +28,7 @@ jobs:
         run: ng build --configuration=production
 
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     
     needs: build
 
@@ -37,7 +37,7 @@ jobs:
         run: |
           # Start a local web server to host the Angular application
           # Example: ng serve --port 4200
-          ng serve --port 4200 &
+          ng serve --port 4200
 
           # Download ngrok
           Invoke-WebRequest -Uri https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-windows-amd64.zip -OutFile ngrok.zip
@@ -47,5 +47,6 @@ jobs:
 
           # Expose the local web server to the internet using ngrok
           .\ngrok http 4200
+
 
 
