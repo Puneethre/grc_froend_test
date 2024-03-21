@@ -1,65 +1,35 @@
-name: Build and Deploy Angular App
+name: Angular Build and Deploy
 
 on:
   push:
     branches:
-      - main
+      - main  # Adjust this to your main branch name
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: window-latest
     
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v2
-
+        
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '18.14.x'
-
-      - name: Install Angular CLI
-        run: npm install -g @angular/cli
-
-      - name: Install dependencies
+          node-version: '18.14'
+          
+      - name: Install Dependencies
         run: npm install
+        
+      - name: Build Angular App
+        run: npm run build -- --prod
+        
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@releases/v3
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: gh-pages  # Change this to your branch name if different
+          FOLDER: C:\actions-runner/dist  # Adjust this if your build output is different
 
-      - name: Build Angular app
-        run: ng build --configuration=production
-
-  deploy:
-    runs-on: windows-latest
-    
-    needs: build
-
-    steps:
-      - name: Deploy to Local Web Server
-        run: |
-          # Navigate to the directory where the Angular app is deployed
-          cd $GITHUB_WORKSPACE
-
-          # Copy the built Angular app files to the server
-          # You may need to adjust the source path based on your project structure
-          cp -r ./dist* C:\actions-runner
-
-          # Start the Angular app
-          ng serve --host 0.0.0.0 --port 4200 &
-
-          # Download ngrok
-          Invoke-WebRequest -Uri https://github.com/actions/runner/releases/download/v2.314.1/actions-runner-win-x64-2.314.1.zip -OutFile actions-runner-win-x64-2.314.1.zip
-
-          # Extract the downloaded Actions Runner
-          Expand-Archive -Path actions-runner-win-x64-2.314.1.zip -DestinationPath .
-
-          # Expose the local web server to the internet using ngrok
-          .\ngrok http 4200
-
-          # Use ngrok configuration file to expose API routes
-          echo "{ \"/api\": { \"target\": \"http://localhost:4200\", \"secure\": false } }" > ngrok.yml
-
-          # Start ngrok with configuration file
-          .\ngrok start --config=ngrok.yml --all
-
-          # Capture the ngrok URL and use it for further processing or logging
 
 
