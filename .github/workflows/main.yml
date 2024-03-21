@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: window-latest
+    runs-on: self-hosted  # Use ubuntu-latest for simplicity
     
     steps:
       - name: Checkout code
@@ -16,20 +16,42 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '18.14'
-          
+          node-version: '14'  # Adjusted to Node.js version 14.x, as Node.js 18.x might not be available
+        
       - name: Install Dependencies
         run: npm install
         
       - name: Build Angular App
         run: npm run build -- --prod
         
+      # If your Angular app has a different build output directory, adjust the next step accordingly
+      - name: Archive production artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: dist
+          path: dist
+
+  deploy:
+    runs-on: ubuntu-latest  # Use ubuntu-latest for simplicity
+    
+    needs: build  # Ensure that the 'deploy' job runs only after the 'build' job is successful
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: dist  # Match the name specified in the 'upload-artifact' step of the 'build' job
+
       - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@releases/v3
+        uses: JamesIves/github-pages-deploy-action@releases/v4  # Updated to the latest release
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: gh-pages  # Change this to your branch name if different
-          FOLDER: C:\actions-runner/dist  # Adjust this if your build output is different
+          FOLDER: dist  # Adjusted to match the build output directory
+
 
 
 
