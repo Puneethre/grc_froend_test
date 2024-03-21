@@ -16,7 +16,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '14.x'  # Changed to a more commonly supported version
+          node-version: '18.14.x'  # Changed to a more commonly supported version
         
       - name: Install Dependencies
         run: npm install
