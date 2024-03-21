@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: self-hosted  # Use ubuntu-latest for simplicity
+    runs-on: self-hosted
     
     steps:
       - name: Checkout code
@@ -16,25 +16,25 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '18.14'  # Adjusted to Node.js version 14.x, as Node.js 18.x might not be available
+          node-version: '14.x'  # Changed to a more commonly supported version
         
       - name: Install Dependencies
         run: npm install
         
       - name: Build Angular App
-        run: npm run build -- --prod
-        
+        run: npm run build -- --configuration=production  # Changed the build command
+
       # If your Angular app has a different build output directory, adjust the next step accordingly
       - name: Archive production artifact
         uses: actions/upload-artifact@v2
         with:
           name: dist
-          path: C:\actions-runner
+          path: C:\actions-runner\dist  # Adjusted to match the build output directory
 
   deploy:
-    runs-on: ubuntu-latest  # Use ubuntu-latest for simplicity
+    runs-on: self-hosted
     
-    needs: build  # Ensure that the 'deploy' job runs only after the 'build' job is successful
+    needs: build
     
     steps:
       - name: Checkout code
@@ -43,14 +43,15 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v2
         with:
-          name: dist  # Match the name specified in the 'upload-artifact' step of the 'build' job
+          name: dist
 
       - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@releases/v4  # Updated to the latest release
+        uses: JamesIves/github-pages-deploy-action@releases/v4
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH: gh-pages  # Change this to your branch name if different
-          FOLDER: C:\actions-runner\dist  # Adjusted to match the build output directory
+          BRANCH: gh-pages
+          FOLDER: dist
+
 
 
 
