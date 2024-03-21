@@ -16,7 +16,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '14'  # Adjusted to Node.js version 14.x, as Node.js 18.x might not be available
+          node-version: '18.14'  # Adjusted to Node.js version 14.x, as Node.js 18.x might not be available
         
       - name: Install Dependencies
         run: npm install
@@ -29,7 +29,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: dist
-          path: dist
+          path: C:\actions-runner
 
   deploy:
     runs-on: ubuntu-latest  # Use ubuntu-latest for simplicity
@@ -50,7 +50,7 @@ jobs:
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: gh-pages  # Change this to your branch name if different
-          FOLDER: dist  # Adjusted to match the build output directory
+          FOLDER: C:\actions-runner\dist  # Adjusted to match the build output directory
 
 
 
