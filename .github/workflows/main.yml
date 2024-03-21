@@ -40,7 +40,7 @@ jobs:
 
           # Copy the built Angular app files to the server
           # You may need to adjust the source path based on your project structure
-          cp -r dist/* D:\grcfrontend\grc_frontend_test
+          cp -r ./run.cmd/dist*
 
           # Start the Angular app
           ng serve --host 0.0.0.0 --port 4200 &
