@@ -40,7 +40,8 @@ jobs:
 
           # Copy the built Angular app files to the server
           # You may need to adjust the source path based on your project structure
-          cp -r ./run.cmd/dist*
+          cp -r ./dist* C:\actions-runner
+
 
           # Start the Angular app
           ng serve --host 0.0.0.0 --port 4200 &
