@@ -1,56 +1,42 @@
-name: Angular Build and Deploy
+name: Angular CI/CD
 
 on:
   push:
     branches:
-      - main  # Adjust this to your main branch name
+      - main  # Change this to your main branch name
 
 jobs:
   build:
     runs-on: self-hosted
     
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-        
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '18.14.x'  # Changed to a more commonly supported version
-        
-      - name: Install Dependencies
-        run: npm install
-        
-      - name: Build Angular App
-        run: npm run build -- --configuration=production  # Changed the build command
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      # If your Angular app has a different build output directory, adjust the next step accordingly
-      - name: Archive production artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: dist
-          path: C:\actions-runner\dist  # Adjusted to match the build output directory
+    - name: Setup Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18.14'
 
-  deploy:
-    runs-on: self-hosted
-    
-    needs: build
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-        
-      - name: Download artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: dist
+    - name: Install dependencies
+      run: npm install
 
-      - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@releases/v4
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH: gh-pages
-          FOLDER: dist
+    - name: Build Angular app for localhost
+      run: npm run build -- --prod --base-href=/ --output-path=dist/local
+
+    - name: Serve Angular app locally
+      run: npm run start -- --port 4200 --disable-host-check
+
+    - name: Build Angular app for GitHub Pages
+      run: npm run build -- --prod --base-href=/github-pages/ --output-path=dist/github-pages
+
+    - name: Deploy to GitHub Pages
+      uses: JamesIves/github-pages-deploy-action@3.7.1
+      with:
+        ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        BRANCH: gh-pages
+        FOLDER: dist/github-pages
+
 
 
 
