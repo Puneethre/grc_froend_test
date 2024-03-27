@@ -1,38 +1,29 @@
-name: Deploy Angular App
+name: Deploy to GitHub Pages
 
 on:
   push:
     branches:
-      - main
+      - main  # Adjust the branch name as needed
 
 jobs:
-  build:
-    runs-on: window-latest
-
+  deploy:
+    runs-on: self-hosted  # Specify the self-hosted runner
+    
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: Copy Files to Local Path
-      run: cp -R ./* /path/to/local/repository
+      - name: Install dependencies and build
+        run: |
+          # Replace these commands with your build commands
+          npm install
+          npm run build
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '18.14'
-
-    - name: Install Dependencies
-      run: npm install
-
-    - name: Build Angular Application
-      run: npm run build --prod
-
-    - name: Deploy to GitHub Pages
-      uses: JamesIves/github-pages-deploy-action@releases/v3
-      with:
-        ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        BRANCH: gh-pages
-        FOLDER: dist/my-angular-app
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build  # Specify the directory containing your built assets
 
 
 
