@@ -1,4 +1,4 @@
-name: GitHub Pages
+name: Deploy Angular App
 
 on:
   push:
@@ -6,30 +6,33 @@ on:
       - main
 
 jobs:
-  deploy:
+  build:
     runs-on: window-latest
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+    - name: Checkout Repository
+      uses: actions/checkout@v2
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18.14  # Adjust to the appropriate Node.js version for your project
+    - name: Copy Files to Local Path
+      run: cp -R ./* /path/to/local/repository
 
-      - name: Install dependencies
-        run: npm install
+    - name: Setup Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18.14'
 
-      - name: Build
-        run: npm run build -- --prod --base-href=/angular-github-actions/  # Adjust base-href according to your GitHub Pages URL
+    - name: Install Dependencies
+      run: npm install
 
-      - name: Deploy
-        if: success()
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: dist/angular-github-actions
-          enable_jekyll: true  # Change to false if you're not using Jekyll
+    - name: Build Angular Application
+      run: npm run build --prod
+
+    - name: Deploy to GitHub Pages
+      uses: JamesIves/github-pages-deploy-action@releases/v3
+      with:
+        ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        BRANCH: gh-pages
+        FOLDER: dist/my-angular-app
 
 
 
