@@ -7,11 +7,16 @@ on:
 
 jobs:
   deploy:
-    runs-on: self-hosted  # Specify the self-hosted runner
+    runs-on: self-hosted  # Use the latest version of Ubuntu as the runner
     
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+
+      - name: Use Node.js 18.14.2
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.14.2
 
       - name: Install dependencies and build
         run: |
@@ -24,6 +29,8 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./build  # Specify the directory containing your built assets
+
+
 
 
 
