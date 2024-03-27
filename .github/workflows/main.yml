@@ -16,7 +16,7 @@ jobs:
       - name: Use Node.js 18.14.2
         uses: actions/setup-node@v3
         with:
-          node-version: 18.14.2
+          node-version: 18.14
 
       - name: Install dependencies and build
         run: |
