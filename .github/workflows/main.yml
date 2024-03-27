@@ -1,41 +1,36 @@
-name: Angular CI/CD
+name: GitHub Pages
 
 on:
   push:
     branches:
-      - main  # Change this to your main branch name
+      - main
 
 jobs:
-  build:
-    runs-on: self-hosted
-    
+  deploy:
+    runs-on: window-latest
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v3
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '18.14'
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.14  # Adjust to the appropriate Node.js version for your project
 
-    - name: Install dependencies
-      run: npm install
+      - name: Install dependencies
+        run: npm install
 
-    - name: Build Angular app for localhost
-      run: npm run build -- --prod --base-href=/ --output-path=dist/local
+      - name: Build
+        run: npm run build -- --prod --base-href=/angular-github-actions/  # Adjust base-href according to your GitHub Pages URL
 
-    - name: Serve Angular app locally
-      run: npm run start -- --port 4200 --disable-host-check
+      - name: Deploy
+        if: success()
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: dist/angular-github-actions
+          enable_jekyll: true  # Change to false if you're not using Jekyll
 
-    - name: Build Angular app for GitHub Pages
-      run: npm run build -- --prod --base-href=/github-pages/ --output-path=dist/github-pages
-
-    - name: Deploy to GitHub Pages
-      uses: JamesIves/github-pages-deploy-action@3.7.1
-      with:
-        ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        BRANCH: gh-pages
-        FOLDER: dist/github-pages
 
 
 
