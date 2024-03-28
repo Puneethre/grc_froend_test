@@ -28,7 +28,7 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./build  # Specify the directory containing your built assets
+          publish_dir: /C:/actions-runner/_work/grc_frontend_test/grc_frontend_test/dist/grc  # Specify the directory containing your built assets
 
 
     
