@@ -30,25 +30,8 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./build  # Specify the directory containing your built assets
 
-      - name: Install Nginx
-        run: sudo apt-get update && sudo apt-get install -y nginx
 
-      - name: Configure Nginx
-        run: |
-          sudo rm /etc/nginx/sites-available/default
-          sudo touch /etc/nginx/sites-available/default
-          sudo chmod 777 /etc/nginx/sites-available/default
-          echo "server {
-                  listen 80;
-                  server_name your_domain.com;
-                  root /path/to/your/build/directory;  # Replace this with the path to your build directory
-                  index index.html;
-                  location / {
-                      try_files $uri $uri/ /index.html;
-                  }
-              }" > /etc/nginx/sites-available/default
-          sudo nginx -t
-          sudo systemctl restart nginx
+    
 
 
 
