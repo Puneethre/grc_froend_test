@@ -12,8 +12,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-         with:
-        node-version: '18.14'
+
+      - name: Use Node.js 18.14.2
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.14'
 
       - name: Install dependencies and build
         run: |
@@ -28,6 +31,7 @@ jobs:
           publish_dir: ./dist/grc_froend_test
           publish_branch: gh-pages
           cname: puneethre.github.io
+
 
 
 
