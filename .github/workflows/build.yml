@@ -1,0 +1,26 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main  # Adjust the branch name as needed
+
+jobs:
+  deploy:
+    runs-on: self-hosted  # Use the latest version of Ubuntu as the runner
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Use Node.js 18.14.2
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.14
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build -- --base-href=/gh-pages-workflow/
+      
