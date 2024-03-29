@@ -1,0 +1,48 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main  # Adjust the branch name as needed
+
+jobs:
+  build:
+    runs-on: self-hosted  # Use the latest version of Ubuntu as the runner
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Use Node.js 18.14.2
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.14
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build -- --base-href=/gh-pages-workflow/
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: gh-pages-artifact
+          path: dist/gh-pages-workflow/browser/
+
+  deploy-pages:
+    runs-on: self-hosted
+    needs: build
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: gh-pages-artifact
+          path: dist
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist/gh-pages-workflow/browser/
+
+      
