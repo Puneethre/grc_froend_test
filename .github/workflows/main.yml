@@ -17,7 +17,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '18.14' # Choose your preferred Node.js version here
+          node-version: '18.14' 
 
       - name: Install Dependencies
         run: npm install
@@ -30,8 +30,7 @@ jobs:
         with:
           ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: gh-pages
-          FOLDER: dist/my-angular-app # Adjust the folder path as needed for your project
-
+          FOLDER: dist/
 
 
 
