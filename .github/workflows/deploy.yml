@@ -1,35 +1,31 @@
 name: Deploy to GitHub Pages
-
+ 
 on:
   push:
-    branches: [main]  # Change this to your desired branch
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
+    branches:
+      - main  # Change this to your main branch name if different
+ 
 jobs:
   deploy:
-    runs-on: self-hosted  # Changed from self-hosted
+    runs-on: self-hosted
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Install Node.js
-        uses: actions/setup-node@v3
+      - name: Checkout repository
+        uses: actions/checkout@v2
+ 
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
         with:
-          node-version: 18.14  # Change this to your desired Node.js version
-
+          node-version: '18.14'
+ 
       - name: Install dependencies
-        run: npm ci
-
-      - name: Build project
-        run: npm run build
-
+        run: npm install  # Or yarn install if you're using yarn
+ 
+      - name: Build website
+        run: npm run build  # Or whatever command is required to build your website
+ 
       - name: Deploy to GitHub Pages
-        env:
-          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-        run: |
-          # Your deployment commands here
-          git push -f https://${{ github.actor }}:${{ secrets.ACCESS_TOKEN }}@github.com/${{ github.repository }}.git gh-pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.ACCESS_TOKEN }}
+          publish_dir: ./build  # Update this to the directory containing your built website
+          publish_branch: gh-pages
