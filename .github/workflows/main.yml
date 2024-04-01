@@ -2,35 +2,34 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches:
-      - main  # Adjust the branch name as needed
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  deploy:
-    runs-on: self-hosted  # Specify the self-hosted runner
-    
+
+  build:
+    runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Use Node.js 18.14.2
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18.14'
-
-      - name: Install dependencies and build
-        run: |
-          # Replace these commands with your build commands
-          npm install
-          npm run build
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist/grc_froend_test
-          publish_branch: gh-pages
-          cname: puneethre.github.io
+    - uses: actions/checkout@v2
+    
+    - name: Use Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18.14.2'
+        
+    - name: Install dependencies
+      run: npm install
+      
+    - name: Build project
+      run: npm run build
+      
+    - name: Deploy to GitHub Pages
+      uses: JamesIves/github-pages-deploy-action@4.1.4
+      with:
+        branch: gh-pages
+        folder: build
 
 
 
