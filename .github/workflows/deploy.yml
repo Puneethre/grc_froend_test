@@ -29,3 +29,36 @@ jobs:
           github_token: ${{ secrets.ACCESS_TOKEN }}
           publish_dir: ./build  # Update this to the directory containing your built website
           publish_branch: gh-pages
+
+      - name: Copy files to server
+        run: |
+          $destination = 'C:\testangular'
+          Copy-Item -Path .\build\* -Destination $destination -Recurse
+
+      - name: Configure Nginx
+        run: |
+          # Navigate to the Nginx configuration file directory
+          cd "C:\nginx-1.24.0\conf"
+          # Modify the Nginx configuration file (nginx.conf) using your preferred text editor
+          $nginxConfPath = 'C:\nginx-1.24.0\conf\nginx.conf'
+          $nginxConfig = Get-Content $nginxConfPath
+          $nginxConfig += @"
+            server {
+                listen 96;
+                server_name 192.168.29.98;
+                root C:\testangular;
+            }
+          "@
+          Set-Content -Path $nginxConfPath -Value $nginxConfig
+
+      - name: Restart Nginx
+        run: Restart-Service nginx
+
+      - name: Verify server is running
+        run: |
+          # Add any verification steps here, such as checking if Nginx is running
+          # Example:
+          # Get-Service nginx
+
+      - name: Open Angular application
+        run: Start-Process "http://yourdomain.com"
