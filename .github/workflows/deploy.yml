@@ -39,7 +39,7 @@ jobs:
           $nginxConfig = Get-Content $nginxConfPath
           $nginxConfig += @"
             server {
-                listen 96;
+                listen 9999;
                 server_name 192.168.29.98;
                 root C:\actions-runner\_work\grc_froend_test\grc_froend_test\dist\grc\browser;  # Update the root path
             }
@@ -47,10 +47,12 @@ jobs:
           Set-Content -Path $nginxConfPath -Value $nginxConfig
 
       - name: Restart Nginx
-        run: Restart-Service nginx
+        run: |
+          Restart-Service nginx || .\nginx.exe
+        shell: pwsh  # Use 'pwsh' instead of 'powershell'
 
       - name: Verify server is running
         run: |
           # Add any verification steps here, such as checking if Nginx is running
-          # Example:
           Get-Service nginx
+        shell: pwsh  # Use 'pwsh' instead of 'powershell'
