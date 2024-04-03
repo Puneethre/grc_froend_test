@@ -33,7 +33,9 @@ jobs:
       - name: Copy files to server
         run: |
           $destination = 'C:\testangular'
-          Copy-Item -Path .\build\* -Destination $destination -Recurse
+          $source = '${{ github.workspace }}\build'  # Use the absolute path to the build directory
+          Copy-Item -Path $source\* -Destination $destination -Recurse
+        shell: pwsh
 
       - name: Configure Nginx
         run: |
