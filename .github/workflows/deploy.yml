@@ -32,19 +32,15 @@ jobs:
 
       - name: Configure Nginx
         run: |
-          # Navigate to the Nginx configuration file directory
-          cd "C:\nginx-1.24.0\conf"
-          # Modify the Nginx configuration file (nginx.conf)
-          $nginxConfPath = 'C:\nginx-1.24.0\conf\nginx.conf'
-          $nginxConfig = Get-Content $nginxConfPath
-          $nginxConfig += @"
-            server {
-                listen 9999;
-                server_name 192.168.29.98;
-                root C:\actions-runner\_work\grc_froend_test\grc_froend_test\dist\grc\browser;  # Update the root path
-            }
-          "@
-          Set-Content -Path $nginxConfPath -Value $nginxConfig
+          echo 'server {
+              listen       9989;
+              server_name  192.168.29.98;
+
+              location / {
+                  root   C:\\actions-runner\\_work\\grc_froend_test\\grc_froend_test\\dist\\grc\\browser;
+                  index  index.html index.htm;
+              }
+          }' > C:\nginx-1.24.0\conf\nginx.conf
 
       - name: Start Nginx
         run: |
