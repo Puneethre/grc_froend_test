@@ -1,28 +1,28 @@
 name: Deploy to GitHub Pages
- 
+
 on:
   push:
     branches:
       - main  # Change this to your main branch name if different
- 
+
 jobs:
   deploy:
     runs-on: self-hosted
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
- 
+
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
           node-version: '18.14'
- 
+
       - name: Install dependencies
         run: npm install  # Or yarn install if you're using yarn
- 
+
       - name: Build website
         run: npm run build  # Or whatever command is required to build your website
- 
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
@@ -30,25 +30,18 @@ jobs:
           publish_dir: ./build  # Update this to the directory containing your built website
           publish_branch: gh-pages
 
-      - name: Copy files to server
-        run: |
-          $destination = 'C:\testangular'
-          $source = '${{ github.workspace }}\build'  # Use the absolute path to the build directory
-          Copy-Item -Path $source\* -Destination $destination -Recurse
-        shell: pwsh
-
       - name: Configure Nginx
         run: |
           # Navigate to the Nginx configuration file directory
           cd "C:\nginx-1.24.0\conf"
-          # Modify the Nginx configuration file (nginx.conf) using your preferred text editor
+          # Modify the Nginx configuration file (nginx.conf)
           $nginxConfPath = 'C:\nginx-1.24.0\conf\nginx.conf'
           $nginxConfig = Get-Content $nginxConfPath
           $nginxConfig += @"
             server {
                 listen 96;
                 server_name 192.168.29.98;
-                root C:\testangular;
+                root C:\actions-runner\_work\grc_froend_test\grc_froend_test\dist\grc\browser;  # Update the root path
             }
           "@
           Set-Content -Path $nginxConfPath -Value $nginxConfig
@@ -60,7 +53,4 @@ jobs:
         run: |
           # Add any verification steps here, such as checking if Nginx is running
           # Example:
-          # Get-Service nginx
-
-      - name: Open Angular application
-        run: Start-Process "http://yourdomain.com"
+          Get-Service nginx
