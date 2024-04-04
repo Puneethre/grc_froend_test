@@ -1,44 +1,29 @@
-name: Angular Build and Deploy
+name: Deploy Angular App
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ] # Replace 'main' with your desired branch
 
 jobs:
+
   build:
     runs-on: self-hosted
+    
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '18.14.x'
-
-      - name: Install Angular CLI
-        run: npm install -g @angular/cli
-
-      - name: Install Dependencies
-        run: npm install
-
-      - name: Build Angular Application
-        run: npm run build --prod
-
-  deploy:
-    needs: build
-    runs-on: self-hosted
-    steps:
-      - name: Install Nginx
-        run: |
-          choco install nginx --ignore-checksums
-      - name: Copy Angular Build Files to Nginx HTML Directory
-        run: |
-          cp -r ./dist/* /C:/actions-runner/_work/grc_froend_test/grc_froend_test/dist/grc/browser
-      - name: Start Nginx
-        run: |
-          Start-Service nginx
-      - name: Deploy Complete
-        run: |
-          echo "Angular application deployed successfully!"
+    - uses: actions/checkout@v3
+    - name: Use Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16.x' # Replace with the desired Node.js version
+        
+    - name: Install dependencies
+      run: npm install
+      
+    - name: Build Angular app
+      run: npm run build --prod
+      
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./dist/grc_froend_test 
