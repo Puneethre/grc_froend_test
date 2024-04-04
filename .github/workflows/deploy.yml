@@ -1,4 +1,4 @@
-name: Build and Deploy Website
+name: Angular Build and Deploy
 
 on:
   push:
@@ -12,29 +12,36 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18.14.x'
+
+      - name: Install Angular CLI
+        run: npm install -g @angular/cli
+
       - name: Install Dependencies
         run: npm install
 
-      - name: Build Website
-        run: npm run build
+      - name: Build Angular Application
+        run: ng build --prod
 
   deploy:
     needs: build
-    runs-on: windows-latest
+    runs-on: self-hosted
     steps:
       - name: Install Nginx
         run: |
           choco install nginx
 
-      - name: Copy Website Files
+      - name: Copy Angular Build Files to Nginx HTML Directory
         run: |
-          # Assuming your build files are in the 'build' directory
-          cp -r ./build/* /path/to/nginx/html
+          cp -r ./dist/* /C:/actions-runner/_work/grc_froend_test/grc_froend_test/dist/grc/browser
 
       - name: Start Nginx
         run: |
-          net start nginx
+          Start-Service nginx
 
       - name: Deploy Complete
         run: |
-          echo "Website deployed successfully!"
+          echo "Angular application deployed successfully!"
