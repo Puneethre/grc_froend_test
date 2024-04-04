@@ -1,64 +1,40 @@
-name: Deploy to GitHub Pages
+name: Build and Deploy Website
 
 on:
   push:
     branches:
-      - main  # Change this to your main branch name if different
+      - main
 
 jobs:
-  deploy:
+  build:
     runs-on: self-hosted
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '18.14'
+      - name: Install Dependencies
+        run: npm install
 
-      - name: Install dependencies
-        run: npm install  # Or yarn install if you're using yarn
+      - name: Build Website
+        run: npm run build
 
-      - name: Build website
-        run: npm run build  # Or whatever command is required to build your website
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.ACCESS_TOKEN }}
-          publish_dir: ./build  # Update this to the directory containing your built website
-          publish_branch: gh-pages
-
-      - name: Configure Nginx
+  deploy:
+    needs: build
+    runs-on: windows-latest
+    steps:
+      - name: Install Nginx
         run: |
-          echo 'events {
-              worker_connections  1024;
-          }
+          choco install nginx
 
-          http {
-              include       mime.types;
-              default_type  application/octet-stream;
-
-              sendfile        on;
-              keepalive_timeout  65;
-
-              server {
-                  listen       9910;
-                  server_name 192.168.29.98;
-
-                  location / {
-                      root  C:\\actions-runner\\_work\\grc_froend_test\\grc_froend_test\\dist\\grc\\browser;
-                      index  index.html index.htm;
-                      try_files $uri $uri/ /index.html;
-                  }
-
-                  # Redirect HTTP to HTTPS
-                  return 301 https://$host$request_uri;
-              }
-          }' > C:\nginx-1.24.0\conf\nginx.conf
+      - name: Copy Website Files
+        run: |
+          # Assuming your build files are in the 'build' directory
+          cp -r ./build/* /path/to/nginx/html
 
       - name: Start Nginx
         run: |
-          cd C:\nginx-1.24.0
-          start nginx
+          net start nginx
+
+      - name: Deploy Complete
+        run: |
+          echo "Website deployed successfully!"
