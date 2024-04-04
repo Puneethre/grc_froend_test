@@ -32,16 +32,13 @@ jobs:
     steps:
       - name: Install Nginx
         run: |
-          choco install nginx
-
+          choco install nginx --ignore-checksums
       - name: Copy Angular Build Files to Nginx HTML Directory
         run: |
           cp -r ./dist/* /C:/actions-runner/_work/grc_froend_test/grc_froend_test/dist/grc/browser
-
       - name: Start Nginx
         run: |
           Start-Service nginx
-
       - name: Deploy Complete
         run: |
           echo "Angular application deployed successfully!"
