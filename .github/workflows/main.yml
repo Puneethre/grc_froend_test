@@ -80,7 +80,7 @@ jobs:
  
             location / {
 
-              root D:/selfhosted_test/actions-runner/grc_froend_test/grc_froend_test/dist/grc/browser;
+              root D:/selfhosted_test/actions-runner/angulardeploy/grc_froend_test/grc_froend_test/dist/grc/browser;
 
               index index.html index.htm;
 
