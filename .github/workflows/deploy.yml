@@ -49,15 +49,14 @@ jobs:
             sendfile on;
             keepalive_timeout 65;
 
-            server {
-              listen 108;
-              server_name 192.168.29.98;
+          server {
+            listen 80;
+            server_name localhost;
 
-              location / {
-                root C:/path/to/angular/app/dist;  # Update path to your Angular app build output
-                index index.html index.htm;
-                try_files $uri $uri/ /index.html;
-              }
+            location / {
+              root C:/path/to/angular/app/dist;  # Update path to your Angular app build output
+              index index.html index.htm;
+              try_files $uri $uri/ /index.html;
             }
           }
           "@
@@ -67,10 +66,11 @@ jobs:
           nginx -s reload
 
       - name: Deploy to Windows server
-        uses: appleboy/scp-action@v2
+        uses: appleboy/ssh-action@v3  # Use a valid version of the SSH/SCP action
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USERNAME }}
           password: ${{ secrets.SERVER_PASSWORD }}
-          source: dist/  # Path to your Angular app build output
-          target: 'C:\\nginx\\www\\'  # Path where NGINX serves files on Windows
+          script: |
+            mkdir C:\nginx\www  # Create directory if not exist
+            scp -r dist/* ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }}:C:/nginx/www/  # Upload Angular app files to server
